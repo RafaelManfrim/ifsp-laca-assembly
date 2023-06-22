@@ -1,161 +1,201 @@
 .data 
-  welcome_msg: .asciiz "Bem v√≠ndo a calculadora em Assembly MIPS\n"
+	welcome_msg: .asciiz "Bem vindo ‡ calculadora em Assembly MIPS\n"
 
-	menu_msg: .asciiz "Escolha a opera√ß√£o que deseja realizar:\nA - Adi√ß√£o\nS - Subtra√ß√£o\nM - Multiplica√ß√£o\nD - Divis√£o\nP - Potencia√ß√£o\nF - Fechar\nDigite o n√∫mero da opera√ß√£o: "
-  
-  character_error_msg: .asciiz "Digite uma op√ß√£o v√°lida\n"
+	menu_msg: .asciiz "Escolha a operaÁ„o que deseja realizar:\nA - AdiÁ„o\nS - SubtraÁ„o\nM - MultiplicaÁ„o\nD - Divis„o\nP - PotenciaÁ„o\nF - Fechar\nEscolha a operaÁ„o: "
+	
+	character_error_msg: .asciiz "Digite uma opÁ„o v·lida\n"
 
-  first_num_msg: .asciiz "Digite o primeiro n√∫mero: "
-  second_num_msg: .asciiz "Digite o segundo n√∫mero: "
+	first_num_msg: .asciiz "\nDigite o primeiro n˙mero: "
+	second_num_msg: .asciiz "Digite o segundo n˙mero: "
 
-  blank_line: .asciiz "\n\n"
+	blank_line: .asciiz "\n\n"
 
-  response_msg: .asciiz "O resultado da opera√ß√£o √©: "
-  exit_msg: .asciiz "Obrigado por usar a calculadora!"
+	response_msg: .asciiz "O resultado da operaÁ„o È: "
+	exit_msg: .asciiz "\nObrigado por usar a calculadora!"
+	
+	verifica_segundo_numero_error_msg: .asciiz "O segundo n˙mero È zero, por favor digite outro\n"
 
 .text
 .globl main
 
 main:
-  # Mostra a mensagem de boas vindas
-  li $v0, 4
-  la $a0, welcome_msg
-  syscall
+	# Mostra a mensagem de boas vindas
+	li $v0, 4
+	la $a0, welcome_msg
+	syscall
 
-  j while
+app:
+	# Mostra o menu de opÁıes
+	li $v0, 4
+	la $a0, menu_msg
+	syscall
 
-while:
-  # Mostra o menu de op√ß√µes
-  li $v0, 4
-  la $a0, menu_msg
-  syscall
+	# LÍ a opÁ„o escolhida pelo usu·rio
+	li $v0, 12
+	syscall
 
-  # L√™ a op√ß√£o escolhida pelo usu√°rio
-  li $v0, 12
-  syscall
+	# Salva a opÁ„o escolhida pelo usu·rio em $t0
+	move $t0, $v0
 
-  # Salva a op√ß√£o escolhida pelo usu√°rio em $t0
-  move $t0, $v0
+	# Se o usu·rio escolher a opÁ„o F, o programa sai
+	beq $t0, 'F', exit
+	beq $t0, 'f', exit
 
-  # Se o usu√°rio escolher a op√ß√£o F, o programa sai
+	# Se o usu·rio escolher a opÁ„o A, o programa vai para a funÁ„o adicao
+	beq $t0, 'A', adicao
+	beq $t0, 'a', adicao
 
-  li $t3, 'F'
-  beq $t0, $t3, exit
+	# Se o usu·rio escolher a opÁ„o S, o programa vai para a funÁ„o subtracao
+	beq $t0, 'S', subtracao
+	beq $t0, 's', subtracao
 
-  li $t3, 'f'
-  beq $t0, $t3, exit
+	# Se o usu·rio escolher a opÁ„o M, o programa vai para a funÁ„o multiplicacao
+	beq $t0, 'M', multiplicacao
+	beq $t0, 'm', multiplicacao
 
-  # Se o usu√°rio escolher a op√ß√£o A, o programa vai para a fun√ß√£o adicao
+	# Se o usu·rio escolher a opÁ„o D, o programa vai para a funÁ„o divisao
+	beq $t0, 'D', divisao
+	beq $t0, 'd', divisao
+	
+	# Se o usu·rio escolher a opÁ„o P, o programa vai para a funÁ„o potencia
+	beq $t0, 'P', potencia
+	beq $t0, 'p', potencia
+	
+	# Se o usu·rio escolher uma opÁ„o inv·lida, o programa volta para o comeÁo do while
+	li $v0, 4
+	la $a0, character_error_msg
+	syscall
 
-  li $t3, 'A'
-  beq $t0, $t3, adicao
-
-  li $t3, 'a'
-  beq $t0, $t3, adicao
-
-  # Se o usu√°rio escolher a op√ß√£o S, o programa vai para a fun√ß√£o subtracao
-
-  # Se o usu√°rio escolher a op√ß√£o M, o programa vai para a fun√ß√£o multiplicacao
-
-  # Se o usu√°rio escolher a op√ß√£o D, o programa vai para a fun√ß√£o divisao
-
-  # Se o usu√°rio escolher a op√ß√£o P, o programa vai para a fun√ß√£o potencia
-
-  # Se o usu√°rio escolher uma op√ß√£o inv√°lida, o programa volta para o come√ßo do while
-  li $v0, 4
-  la $a0, character_error_msg
-  syscall
-
-  j while
+	j app
 
 adicao:
-  # Chama a fun√ß√£o que solicita os n√∫meros
-  jal solicita_numeros
-  
-  # Realiza a adi√ß√£o dos dois n√∫meros
-  add $t4, $t1, $t2
+	# Chama a funÁ„o que solicita os n˙meros
+	jal solicita_numeros
+	
+	add $t3, $t1, $t2
 
-  # Chama a fun√ß√£o que imprime o resultado
-  j print_result
+	# Chama a funÁ„o que imprime o resultado
+	j print_result
 
 subtracao:
-  # Chama a fun√ß√£o que solicita os n√∫meros
-  # Realiza a subtra√ß√£o dos dois n√∫meros
-  # Chama a fun√ß√£o que imprime o resultado
-  j print_result
+	jal solicita_numeros
+	
+	sub $t3, $t1, $t2
+	
+	j print_result
 
 multiplicacao:
-  # Chama a fun√ß√£o que solicita os n√∫meros
-  # Realiza a multiplica√ß√£o dos dois n√∫meros
-  # Chama a fun√ß√£o que imprime o resultado
-  j print_result
+	jal solicita_numeros
+	
+	# Realiza a multiplicaÁ„o dos dois n˙meros
+	mul $t3, $t1, $t2
+	
+	j print_result
 
 divisao:
-  # Chama a fun√ß√£o que solicita os n√∫meros
-  # Entre num while que verifica se o segundo n√∫mero √© 0 e s√≥ libera o programa se n√£o for
-  # Realiza a divis√£o dos dois n√∫meros
-  # Chama a fun√ß√£o que imprime o resultado
-  j print_result
+	jal solicita_numeros
+	
+	# Entre num loop que verifica se o segundo n˙mero È 0 e sÛ libera o programa se n„o for
+	verifica_segundo_numero:
+		bne $t2, $zero, continuar
+		li $v0, 4
+		la $a0, verifica_segundo_numero_error_msg
+		syscall
+		
+		# Solicita o segundo n˙mero
+		li $v0, 4
+		la $a0, second_num_msg
+		syscall
+
+		# LÍ o segundo n˙mero
+		li $v0, 5
+		syscall
+
+		# Salva o segundo n˙mero em $t2
+		move $t2, $v0
+		
+		j verifica_segundo_numero
+		
+	continuar: 
+		# Realiza a divis„o dos dois n˙meros
+		div $t1, $t2
+		mflo $t3
+		
+		j print_result
 
 potencia:
-  # Chama a fun√ß√£o que solicita os n√∫meros
-  # Realiza a potencia√ß√£o dos dois n√∫meros
-  # Chama a fun√ß√£o que imprime o resultado
-  j print_result
+	jal solicita_numeros
+	
+	li $t3, 1
+	
+	j while
+	
+	# Realiza a potenciaÁ„o dos dois n˙meros
+	while:
+		# Verifica se o segundo n˙mero È 0 e chama a funÁ„o que imprime o resultado
+		beqz $t2, print_result
+		
+		# Multiplicar o resultado parcial pela base e armazenar
+		mult $t3, $t1
+  		mflo $t3
+		
+		# Decrementa o expoente
+		addi $t2, $t2, -1
+		
+		# Volta para o while
+		j while
 
 solicita_numeros:
-  # Solicita o primeiro n√∫mero
-  li $v0, 4
-  la $a0, first_num_msg
-  syscall
+	# Solicita e lÍ o primeiro n˙mero
+	li $v0, 4
+	la $a0, first_num_msg
+	syscall
 
-  # L√™ o primeiro n√∫mero
-  li $v0, 5
-  syscall
+	li $v0, 5
+	syscall
 
-  # Salva o primeiro n√∫mero em $t1
-  move $t1, $v0
+	# Salva o primeiro n˙mero em $t1
+	move $t1, $v0
 
-  # Solicita o segundo n√∫mero
-  li $v0, 4
-  la $a0, second_num_msg
-  syscall
+	# Solicita e lÍ o segundo n˙mero
+	li $v0, 4
+	la $a0, second_num_msg
+	syscall
 
-  # L√™ o segundo n√∫mero
-  li $v0, 5
-  syscall
+	li $v0, 5
+	syscall
 
-  # Salva o segundo n√∫mero em $t2
-  move $t2, $v0
+	# Salva o segundo n˙mero em $t2
+	move $t2, $v0
 
-  # Retorna para a fun√ß√£o que chamou
-  jr $ra
+	# Retorna para a funÁ„o que chamou
+	jr $ra
 
 print_result:
-  # Mostra a mensagem de impress√£o do resultado
-  li $v0, 4
-  la $a0, response_msg
-  syscall
+	# Mostra a mensagem de impress„o do resultado
+	li $v0, 4
+	la $a0, response_msg
+	syscall
 
-  # Imprime o resultado
-  move $a0, $t4
-  li $v0, 1
-  syscall
+	# Imprime o resultado
+	move $a0, $t3
+	li $v0, 1
+	syscall
 
-  # Imprime uma linha em branco
-  li $v0, 4
-  la $a0, blank_line
-  syscall
+	# Imprime uma linha em branco
+	li $v0, 4
+	la $a0, blank_line
+	syscall
 
-  # Reinicia a calculadora
-  j while
+	# Reinicia a calculadora
+	j app
 
 exit:
-  # Mostra a mensagem de sa√≠da
-  li $v0, 4
-  la $a0, exit_msg
-  syscall
+	# Mostra a mensagem de saÌda
+	li $v0, 4
+	la $a0, exit_msg
+	syscall
 
-  # Encerra o programa
-  li $v0, 10
-  syscall
+	# Encerra o programa
+	li $v0, 10
+	syscall
